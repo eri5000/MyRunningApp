@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://klugxuofksmzlphfcuzc.supabase.co wss://klugxuofksmzlphfcuzc.supabase.co; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.109.0/dist/umd/supabase.js"></script>
+<title>Mi progreso corriendo</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;--bg:#f3f6ee;--card:#fff;--tx:#1a1d12;--mu:#5d6853;--ac:#4d800a;--ok:#2b8a3e;--bad:#c92a2a;--bd:#dce3d2;--in:#1c7ed6;--on:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d100b;--card:#161a12;--tx:#eef2e6;--mu:#8f9b84;--ac:#c0eb75;--ok:#69db7c;--bad:#ff8787;--bd:#262e20;--in:#4dabf7;--on:#0d100b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d100b;--card:#161a12;--tx:#eef2e6;--mu:#8f9b84;--ac:#c0eb75;--ok:#69db7c;--bad:#ff8787;--bd:#262e20;--in:#4dabf7;--on:#0d100b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 14px}h2{font-size:14px;margin:0 0 10px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.k b{display:block;font-size:22px}.k span{color:var(--mu);font-size:12px}
+#f{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:4px}
+input,select{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+button{font:inherit;background:var(--ac);color:var(--on);border:0;border-radius:8px;padding:10px 14px;cursor:pointer;align-self:end}
+button.g{background:none;color:var(--mu);padding:2px 6px}button.on{color:var(--ac)!important;font-weight:700}
+.ins p{margin:6px 0}.up{color:var(--ok)}.dn{color:var(--bad)}
+.sc{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}th{color:var(--mu);font-weight:500}
+section[hidden]{display:none!important}.big{display:flex;flex-direction:column;gap:10px}.big button{padding:16px;font-size:17px}button.o{background:none;color:var(--in);border:1px solid var(--in)}svg{width:100%;height:auto;display:block}.em{color:var(--mu);text-align:center;padding:10px}
+header#nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--bd)}
+.wrap{max-width:1100px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:17px;color:var(--tx);text-decoration:none}
+#links{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+#links a{padding:6px 12px;border-radius:8px;color:var(--mu);text-decoration:none;font-weight:500;cursor:pointer}
+#links a:hover{color:var(--tx)}#links a.act{background:var(--ac);color:var(--on)}
+.tools{display:flex;gap:2px}
+main{max-width:1100px!important}
+#s1,#s2,#s3,#s6{max-width:640px;margin:0 auto}
+#s1 .card{padding:24px}
+footer{max-width:1100px;margin:8px auto 24px;padding:0 16px;color:var(--mu);font-size:12px;text-align:center}
+@media(min-width:900px){#s4,#s5{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:16px}.wide,#s5>div:first-child,#s5>p{grid-column:1/-1}}
+#s0,#sL,#s8{max-width:640px;margin:0 auto}
+#conf{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+#conf[hidden]{display:none}
+#sync{white-space:nowrap}
+@media(max-width:600px){#syt{display:none}}
+</style></head><body><header id="nav" style="display:none"><div class="wrap"><a class="brand" href="#inicio" onclick="go('s4');return false">🏃 Mi progreso corriendo</a>
+<nav id="links"><a id="n4" href="#inicio" onclick="go('s4');return false">Inicio</a><a id="n2" href="#registrar" onclick="go('s2');return false">Registrar</a><a id="n5" href="#records" onclick="go('s5');return false">Records</a><a id="n7" href="#predicciones" onclick="go('s7');return false">Predicciones</a><a id="n6" href="#calculadora" onclick="go('s6');return false">Calculadora</a><a id="n8" href="#cuenta" onclick="go('s8');return false">Cuenta</a></nav>
+<div class="tools"><button class="g" id="sync" type="button" onclick="syncNow(true)"><span id="syi">☁️</span> <span id="syt" style="font-size:12px"></span></button><button class="g" id="ukm" onclick="setU('km')">km</button><button class="g" id="umi" onclick="setU('mi')">mi</button><button class="g" id="thm" onclick="toggleTheme()">🌙</button></div></div></header>
+<main>
+
+<section id="sL"><div class="card" style="padding:24px"><div style="font-size:22px;font-weight:700">🏃 Mi progreso corriendo</div><p id="slm" style="color:var(--mu)">Cargando…</p><div id="sla" style="display:none;gap:8px;flex-wrap:wrap"><button type="button" onclick="retryLoad()">Reintentar</button><button type="button" class="o" onclick="authLogout(true)">Cerrar sesión</button></div></div></section>
+<section id="s0" hidden><div class="card" style="padding:24px">
+<div style="font-size:26px;font-weight:700;margin-bottom:6px">🏃 Mi progreso corriendo</div>
+<p style="color:var(--mu);margin:0 0 16px">Inicia sesión o crea una cuenta para guardar tus entrenamientos y verlos en todos tus dispositivos.</p>
+<div id="atabs" style="display:flex;gap:6px;margin-bottom:12px"><button type="button" id="tin" onclick="authMode('in')">Iniciar sesión</button><button type="button" id="tup" class="o" onclick="authMode('up')">Crear cuenta</button></div>
+<div style="display:grid;gap:10px">
+<label id="ael">Correo electrónico<input id="ae" type="email" autocomplete="email" inputmode="email"></label>
+<label id="apl">Contraseña<input id="ap" type="password" autocomplete="current-password"></label>
+<label id="ap2l" style="display:none">Repite la contraseña<input id="ap2" type="password" autocomplete="new-password"></label>
+<div id="am" role="status" style="font-size:14px"></div>
+<button type="button" id="ago" onclick="authGo()">Iniciar sesión</button>
+<button type="button" class="g" id="ars" style="display:none" onclick="authResend()">Reenviar correo de confirmación</button>
+<button type="button" class="g" id="afg" onclick="authForgot()">¿Olvidaste tu contraseña?</button>
+</div></div></section>
+<section id="s8" hidden>
+<div style="margin-bottom:12px"><b>👤 Cuenta</b></div>
+<div class="card"><h2>Sesión</h2><p id="acc" style="margin-top:0"></p><p id="syd" style="color:var(--mu);font-size:13px"></p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" onclick="syncNow(true)">Sincronizar ahora</button><button type="button" class="o" onclick="authLogout()">Cerrar sesión</button></div></div>
+<div class="card"><h2>Respaldo de datos</h2><p style="color:var(--mu);margin-top:0;font-size:13px">Exporta tus datos a un archivo, o importa un respaldo (por ejemplo, de la versión anterior de la app). Al importar solo se agregan los registros que no existan.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="o" onclick="exportData()">Exportar JSON</button><button type="button" class="o" onclick="$('imf').click()">Importar JSON…</button><input id="imf" type="file" accept="application/json,.json" style="display:none"></div>
+<p id="imm" style="font-size:13px;margin-bottom:0"></p></div>
+</section>
+<div id="conf" hidden><div class="card" style="max-width:460px;margin:0"><h2>Conflicto de datos</h2>
+<p style="margin-top:0">Hay cambios nuevos en la nube y también cambios sin sincronizar en este dispositivo. Elige qué hacer:</p>
+<p id="cfs" style="color:var(--mu);font-size:13px"></p>
+<div style="display:grid;gap:8px"><button type="button" onclick="resolveConflict('merge')">Combinar ambos (recomendado)</button><button type="button" class="o" onclick="resolveConflict('cloud')">Usar los datos de la nube</button><button type="button" class="o" onclick="resolveConflict('local')">Conservar los de este dispositivo</button></div></div></div>
+<section id="s1" hidden><div class="card"><div style="font-size:26px;font-weight:700;margin-bottom:6px">🏃 Mi progreso corriendo</div><p style="color:var(--mu);margin:0 0 16px">Registra tus runs y workouts en pista, y mira cómo vas mejorando.</p>
+<label>¿Cómo te llamas?<input id="nm" placeholder="Tu nombre" autocomplete="given-name"></label>
+<p><button onclick="saveName()">Continuar</button></p></div></section>
+<section id="s2" hidden><div class="card"><h2 id="g2"></h2>
+<p style="margin-top:0">¿Qué vas a registrar hoy?</p>
+<div class="big"><button onclick="setMode('run')">🏃 Una run</button><button onclick="setMode('wo')">🏟️ Workout en pista</button><button class="o" onclick="go('s4')">Ir al resumen</button></div>
+<p><button class="g" onclick="$('nm').value=NAME;go('s1')">Cambiar nombre</button></p></div></section>
+<section id="s3" hidden><div class="card"><h2 id="ft">Registrar run</h2>
+<div id="f">
+<label>Fecha<input type="date" id="d"></label>
+<label><span id="lbd">Distancia (km)</span><input type="number" id="km" step="0.01" min="0.1"></label>
+<label>Duración (mm:ss o h:mm:ss)<input id="mi" placeholder="19:33" inputmode="text" autocomplete="off"></label>
+<label id="tl">Tipo<select id="t"><option>Fácil</option><option>Tempo</option><option>Series</option><option>Largo</option><option>Carrera</option></select></label>
+<label id="wl" style="display:none;grid-column:1/-1">Workout en pista<input id="w" placeholder="ej. 8x400m, o 2x800 + 2x400 (descanso 90s)"></label>
+<label>Esfuerzo (1-10)<input type="number" id="rpe" min="1" max="10" value="5"></label>
+<label>Notas<input id="n" placeholder="opcional"></label>
+<p id="err" style="grid-column:1/-1;color:var(--bad);margin:0"></p>
+<button type="button" id="gb">Guardar</button><button type="button" class="o" onclick="go('s2')">Atrás</button></div></div>
+</section>
+<section id="s4" hidden>
+<div class="wide" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px"><span id="hi" style="font-size:22px;font-weight:700"></span><span style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="go('s2')">➕ Nuevo registro</button></span></div>
+<div class="card wide"><h2>Resumen</h2><div class="grid" id="kp"></div></div>
+<div class="card"><h2>Meta semanal</h2><div id="gl"></div><div style="display:flex;gap:8px;margin-top:10px"><input id="gv" type="number" step="0.1" min="0" placeholder="Meta por semana" style="flex:1"><button onclick="setGoal()">Guardar meta</button></div></div>
+<div class="card ins"><h2>Cómo vas</h2><div id="ins"></div></div>
+<div class="card"><h2>Distancia por semana</h2><div id="c1"></div></div>
+<div class="card"><h2>Ritmo por salida (menor es mejor)</h2><div id="c2"></div></div>
+<div class="card"><h2>Esfuerzo vs ritmo</h2><div id="c3"></div><p id="c3t" style="color:var(--mu);font-size:12px;margin:8px 0 0"></p></div>
+<div class="card"><h2>Actividad (12 semanas)</h2><div id="cal" class="sc"></div></div>
+<div class="card wide"><h2>Carreras próximas</h2><div id="rc"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><input id="rn" placeholder="Nombre" style="flex:2;min-width:120px"><input id="rk" placeholder="Distancia (opc.)" style="flex:1;min-width:100px"><input id="rd" type="date" style="flex:1"><button onclick="addRace()">Agregar</button></div></div>
+<div class="card wide"><h2>Historial</h2><div class="sc" id="hs"></div></div>
+</section>
+<section id="s5" hidden>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b>🏆 Mis records</b></div>
+<div class="card"><h2>Millas</h2><div class="sc" id="rmi"></div></div>
+<div class="card"><h2>Kilómetros</h2><div class="sc" id="rkm"></div></div>
+<p style="color:var(--mu);font-size:12px">Cuentan las runs registradas con esa distancia (±2%), sin workouts en pista. Si no hay ninguna, queda vacío.</p>
+</section>
+<section id="s6" hidden>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b>🧮 Calculadora de ritmos</b></div>
+<div class="card"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+<label>Distancia<input id="cv" type="number" step="any" min="0" placeholder="ej. 5" inputmode="decimal"></label>
+<label>Unidad<select id="cu" onchange="cc()"><option value="km">Kilómetros</option><option value="mi">Millas</option></select></label>
+<label>Tiempo (mm:ss o h:mm:ss)<input id="ct" placeholder="20:00"></label>
+<label><span id="cpl">Ritmo</span><input id="cq" placeholder="4:00"></label>
+<button type="button" onclick="calc()">Calcular</button></div>
+<p style="color:var(--mu);font-size:12px">Llena el tiempo para obtener el ritmo, o el ritmo para obtener el tiempo (si llenas ambos, usa el tiempo).</p>
+<div id="cr" style="font-size:16px;line-height:1.7"></div></div></section>
+<section id="s7" hidden>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b>🔮 Predicciones</b></div>
+<div class="card"><h2>Predictor de carreras</h2><div id="pr"></div></div>
+<div class="card"><h2>Proyección a 1 año</h2><div id="pj"></div><div id="pjc" class="sc"></div><p id="pjn" style="color:var(--mu);font-size:12px;margin:8px 0 0"></p></div>
+</section>
+
+</main>
+<footer>Mi progreso corriendo · v13</footer>
+<script>
+var runs=[],U=(function(){try{return localStorage.getItem('unit')||'km'}catch(e){return'km'}})(),MI=1.609344,NAME='',MODE='run',EDIT=null,GOAL=0,RACES=[];
+var $=function(i){return document.getElementById(i)};
+var THEME=(function(){try{return localStorage.getItem('theme')||''}catch(e){return''}})();
+function effTheme(){return THEME||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}
+function applyTheme(){var t=effTheme(),h=document.documentElement;if(THEME)h.setAttribute('data-theme',THEME);else h.removeAttribute('data-theme');var b=$('thm');if(b){b.textContent=t=='dark'?'☀️':'🌙';b.title=t=='dark'?'Cambiar a modo claro':'Cambiar a modo oscuro'}}
+function toggleTheme(){THEME=effTheme()=='dark'?'light':'dark';try{localStorage.setItem('theme',THEME)}catch(e){}applyTheme()}
+$('d').value=today();
+function esc(t){return String(t).replace(/[<>&]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;'}[c]})}
+function cd(km){return U=='mi'?km/MI:km}
+function cp(p){return U=='mi'?p*MI:p}
+function fd(m){var t=Math.round(m*60),h=Math.floor(t/3600),mm=Math.floor(t%3600/60),ss=t%60;return(h?h+':'+(mm<10?'0':''):'')+mm+':'+(ss<10?'0':'')+ss}
+function pd(v){v=v.trim().replace(',','.');if(!v)return NaN;var a=v.split(':').map(Number);if(a.some(function(x){return isNaN(x)||x<0}))return NaN;
+ if(a.length==1)return a[0];if(a.length==2){if(a[1]>=60)return NaN;return a[0]+a[1]/60}if(a.length==3){if(a[1]>=60||a[2]>=60)return NaN;return a[0]*60+a[1]+a[2]/60}return NaN}
+function setU(u){U=u;try{localStorage.setItem('unit',u)}catch(e){}$('km').value='';render()}
+function recTable(list,unitName,per){
+ return '<table><tr><th>Distancia</th><th>Mejor tiempo</th><th>Ritmo</th><th>Fecha</th></tr>'+list.map(function(n){
+  var tg=n*per,c=runs.filter(function(r){return r.t!='Pista'&&Math.abs(r.km-tg)<=tg*0.02}).sort(function(a,b){return a.min-b.min})[0];
+  return '<tr><td><b>'+n+' '+unitName+'</b></td><td>'+(c?fd(c.min):'')+'</td><td>'+(c?fp(c.min/(c.km/per))+'/'+unitName:'')+'</td><td>'+(c?c.d:'')+'</td></tr>'}).join('')+'</table>'}
+function renderRecs(){$('rmi').innerHTML=recTable([1,3,5,10],'mi',MI);$('rkm').innerHTML=recTable([1,3,5,10],'km',1)}
+function p2(n){return n<10?'0'+n:''+n}
+function ymd(x){return x.getFullYear()+'-'+p2(x.getMonth()+1)+'-'+p2(x.getDate())}
+function today(){return ymd(new Date())}
+function addDays(d,n){var x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return ymd(x)}
+function wsum(w){return runs.filter(function(r){return wk(r.d)==w}).reduce(function(a,r){return a+r.km},0)}
+function persist(){save()}
+function streak(){if(!GOAL)return 0;var cur=wk(today()),k=cur,n=0;if(wsum(cur)<GOAL)k=addDays(cur,-7);while(wsum(k)>=GOAL&&n<520){n++;k=addDays(k,-7)}return n}
+function renderGoal(){var d=wsum(wk(today())),g=$('gl');
+ if(!GOAL)g.innerHTML='<div style="color:var(--mu)">Define una meta de distancia semanal.</div>';
+ else{var st=streak(),pc=Math.min(100,d/GOAL*100);g.innerHTML='<div><b>'+cd(d).toFixed(1)+'</b> / '+cd(GOAL).toFixed(1)+' '+U+'</div><div style="height:12px;background:var(--bd);border-radius:6px;margin:8px 0;overflow:hidden"><div style="height:100%;width:'+pc+'%;background:'+(d>=GOAL?'var(--ok)':'var(--ac)')+'"></div></div><div style="color:var(--mu);font-size:13px">'+(d>=GOAL?'🎉 ¡Meta cumplida! ':'Te faltan '+cd(GOAL-d).toFixed(1)+' '+U+'. ')+(st?'🔥 Racha: '+st+' semana'+(st>1?'s':''):'')+'</div>'}
+ if(document.activeElement!==$('gv'))$('gv').value=GOAL?+cd(GOAL).toFixed(1):''}
+function setGoal(){var v=parseFloat($('gv').value);GOAL=v>0?v*(U=='mi'?MI:1):0;persist();renderGoal()}
+function loadMsg(){var cur=wk(today()),a=wsum(cur),b=wsum(addDays(cur,-7));if(!(b>0))return'';var pc=(a-b)/b*100;
+ return pc>10?'<p>⚠️ <b>Carga:</b> llevas '+pc.toFixed(0)+'% más que la semana pasada ('+cd(a).toFixed(1)+' vs '+cd(b).toFixed(1)+' '+U+'). Subir más de ~10% por semana aumenta el riesgo de lesión.</p>':'<p>✅ <b>Carga:</b> dentro de la regla del 10% respecto a la semana pasada.</p>'}
+function renderPred(){var el=$('pr'),cut=Date.now()-120*864e5;
+ var c=runs.filter(function(r){return r.t!='Pista'&&r.km>=3&&r.km<=45&&new Date(r.d+'T00:00:00')>=cut});
+ if(!c.length){el.innerHTML='<div class="em">Registra una run de 3 km o más (en los últimos 4 meses) para ver predicciones.</div>';return}
+ var b=c.slice().sort(function(x,y){return x.min*Math.pow(5/x.km,1.06)-y.min*Math.pow(5/y.km,1.06)})[0];
+ el.innerHTML='<table><tr><th>Distancia</th><th>Tiempo estimado</th><th>Ritmo</th></tr>'+[['5K',5],['10K',10],['Media maratón',21.0975],['Maratón',42.195]].map(function(d){var t=b.min*Math.pow(d[1]/b.km,1.06);return'<tr><td><b>'+d[0]+'</b></td><td>'+fd(t)+'</td><td>'+fp(cp(t/d[1]))+'/'+U+'</td></tr>'}).join('')+'</table><p style="color:var(--mu);font-size:12px;margin:8px 0 0">Fórmula de Riegel con tu mejor run reciente: '+cd(b.km).toFixed(1)+' '+U+' en '+fd(b.min)+' ('+b.d+'). Es una estimación.</p>'}
+function renderEff(){var l=runs.filter(function(r){return r.t!='Pista'&&r.rpe>0}).slice(-20);
+ if(l.length<3){$('c3').innerHTML='<div class="em">Con 3 runs o más con esfuerzo registrado verás esta gráfica.</div>';$('c3t').textContent='';return}
+ var v=l.map(function(r){return 60/cp(r.min/r.km)/r.rpe}),txt='Eficiencia = velocidad ÷ esfuerzo (más alto = más rápido con el mismo esfuerzo).';
+ if(v.length>=6){var h=Math.floor(v.length/2),av=function(a){return a.reduce(function(x,y){return x+y},0)/a.length},pc=(av(v.slice(h))-av(v.slice(0,h)))/av(v.slice(0,h))*100;txt=(pc>=0?'📈 +':'📉 ')+pc.toFixed(1)+'% en la segunda mitad vs la primera. '+txt}
+ $('c3').innerHTML=line(v,l.map(function(r){return r.d.slice(5)}),function(x){return x.toFixed(2)},true);$('c3t').textContent=txt}
+function renderCal(){var st=addDays(wk(today()),-77),td=today(),m={};runs.forEach(function(r){m[r.d]=(m[r.d]||0)+r.km});
+ var mx=Math.max.apply(null,Object.keys(m).map(function(k){return m[k]}).concat([1])),s='<svg viewBox="0 0 330 150" style="min-width:300px">';
+ for(var c=0;c<12;c++)for(var r=0;r<7;r++){var d=addDays(st,c*7+r);if(d>td)continue;var v=m[d]||0;
+  s+='<rect x="'+(22+c*25)+'" y="'+(4+r*20)+'" width="21" height="17" rx="3" fill="'+(v?'var(--ac)':'var(--bd)')+'" opacity="'+(v?(0.35+0.65*v/mx).toFixed(2):1)+'"><title>'+d+(v?' · '+cd(v).toFixed(1)+' '+U:'')+'</title></rect>'}
+ ['L','M','X','J','V','S','D'].forEach(function(t,i){s+='<text x="2" y="'+(17+i*20)+'" font-size="10" fill="var(--mu)">'+t+'</text>'});
+ $('cal').innerHTML=s+'</svg>'}
+function renderRaces(){var t=today(),l=RACES.filter(function(x){return x.d>=t}).sort(function(a,b){return a.d<b.d?-1:1});
+ $('rc').innerHTML=l.length?'<table>'+l.map(function(x){var dd=Math.round((new Date(x.d+'T00:00:00')-new Date(t+'T00:00:00'))/864e5);return'<tr><td><b>'+esc(x.n)+'</b>'+(x.k?' · '+esc(x.k):'')+'</td><td>'+x.d+'</td><td>'+(dd==0?'¡Hoy!':dd==1?'Mañana':'Faltan '+dd+' días')+'</td><td><button class="g" onclick="delRace('+x.id+')">✕</button></td></tr>'}).join('')+'</table>':'<div class="em">No hay carreras próximas. Agrega una abajo.</div>'}
+function addRace(){var n=$('rn').value.trim(),d=$('rd').value;if(!n||!d)return;RACES.push({id:Date.now(),n:n,d:d,k:$('rk').value.trim()});$('rn').value='';$('rk').value='';$('rd').value='';persist();renderRaces()}
+function delRace(id){RACES=RACES.filter(function(x){return x.id!==id});persist();renderRaces()}
+function edit(id){var r=runs.filter(function(x){return x.id===id})[0];if(!r)return;
+ setMode(r.t=='Pista'?'wo':'run');if(r.t!='Pista')$('t').value=r.t;
+ $('d').value=r.d;$('km').value=+cd(r.km).toFixed(2);$('mi').value=fd(r.min);$('rpe').value=r.rpe||5;$('n').value=r.n||'';$('w').value=r.w||'';
+ EDIT=id;$('ft').textContent='Editar '+(r.t=='Pista'?'workout en pista':'run')}
+function cc(){$('cpl').textContent='Ritmo (min/'+$('cu').value+')'}
+function calc(){var r=$('cr'),dk=parseFloat($('cv').value)*($('cu').value=='mi'?MI:1);
+ var t=pd($('ct').value),q=pd($('cq').value);
+ if(!(dk>0)){r.textContent='Escribe una distancia.';return}
+ if(t>0){var p=t/dk;r.innerHTML='<b>Ritmo:</b> '+fp(p)+'/km · '+fp(p*MI)+'/mi<br><b>400 m:</b> '+fd(p*.4)+' · <b>800 m:</b> '+fd(p*.8)}
+ else if(q>0){var pk=q/($('cu').value=='mi'?MI:1);r.innerHTML='<b>Tiempo:</b> '+fd(pk*dk)+'<br><b>Ritmo:</b> '+fp(pk)+'/km · '+fp(pk*MI)+'/mi'}
+ else r.textContent='Escribe el tiempo o el ritmo.'}
+function projModel(){
+ var cur=wk(today()),cut=wk(addDays(cur,-77)),wb={};
+ runs.forEach(function(r){if(r.t=='Pista'||r.km<3||r.km>45)return;var w=wk(r.d);if(w<cut)return;var t=r.min*Math.pow(5/r.km,1.06);if(!wb[w]||t<wb[w])wb[w]=t});
+ var pts=Object.keys(wb).sort().map(function(w){return{x:Math.round((new Date(w+'T00:00:00')-new Date(cur+'T00:00:00'))/6048e5),t:wb[w]}});
+ var n=pts.length;if(n<4)return{n:n};
+ var mx=0,my=0;pts.forEach(function(p){mx+=p.x;my+=Math.log(p.t)});mx/=n;my/=n;
+ var sxx=0,sxy=0,syy=0;pts.forEach(function(p){var dx=p.x-mx,dy=Math.log(p.t)-my;sxx+=dx*dx;sxy+=dx*dy;syy+=dy*dy});
+ if(sxx<1)return{n:n};
+ var b=sxy/sxx,a=my-b*mx,r2=syy?sxy*sxy/(sxx*syy):0,rate=Math.max(0,Math.min(-b,0.015));
+ var sc={c:[.5,20,.15],r:[1,26,.2],o:[1,52,.25]};
+ var f=function(k,key){var q=sc[key],d=Math.pow(.5,1/q[1]),S=0;for(var j=1;j<=k;j++)S+=rate*q[0]*Math.pow(d,j);return Math.max(1-q[2],Math.exp(-S))};
+ return{n:n,pts:pts,r2:r2,rate:rate,now:Math.exp(a),f:f}}
+function renderProj(){var el=$('pj'),m=projModel();
+ if(!m.pts){el.innerHTML='<div class="em">Necesito al menos 4 semanas con una run de 3 km o más en las últimas 12 semanas para proyectar. Llevas '+(m.n||0)+'.</div>';$('pjc').innerHTML='';$('pjn').textContent='';return}
+ var T=function(t5,d){return t5*Math.pow(d/5,1.06)},ds=[['5K',5],['10K',10],['Media maratón',21.0975],['Maratón',42.195]];
+ var rows=ds.map(function(d){return'<tr><td><b>'+d[0]+'</b></td><td>'+fd(T(m.now,d[1]))+'</td><td>'+fd(T(m.now*m.f(26,'r'),d[1]))+'</td><td><b>'+fd(T(m.now*m.f(52,'r'),d[1]))+'</b></td><td style="color:var(--mu)">'+fd(T(m.now*m.f(52,'o'),d[1]))+' – '+fd(T(m.now*m.f(52,'c'),d[1]))+'</td></tr>'}).join('');
+ var end=m.now*m.f(52,'r'),pct=(1-m.f(52,'r'))*100,n28=runs.filter(function(r){return(Date.now()-new Date(r.d+'T00:00:00'))/864e5<28}),vol=n28.reduce(function(a,r){return a+r.km},0)/4,freq=n28.length/4;
+ var score=(m.n>=8?1:0)+(m.r2>=.3?1:0)+(freq>=3?1:0),conf=score>=3?'alta':score==2?'media':'baja';
+ el.innerHTML=(m.rate>0?'<p style="margin-top:0">Si sigues así, en 1 año tu 5K podría pasar de <b>'+fd(m.now)+'</b> a <b>'+fd(end)+'</b> (≈'+pct.toFixed(1)+'% más rápido).</p>':'<p style="margin-top:0">Tu tendencia reciente es plana (no muestra mejora), así que la proyección también lo es: <b>'+fd(m.now)+'</b> en 5K. Con más constancia o variedad (series, tempo) ese número suele moverse.</p>')
+  +'<div class="sc"><table><tr><th>Distancia</th><th>Hoy</th><th>6 meses</th><th>1 año</th><th>Rango 1 año</th></tr>'+rows+'</table></div>'
+  +'<p style="color:var(--mu);font-size:12px;margin:8px 0 0">Datos usados: '+m.n+' semanas con runs ≥3 km · mejora actual '+(m.rate*100).toFixed(2)+'% por semana en tu 5K equivalente · volumen promedio '+cd(vol).toFixed(1)+' '+U+'/semana · '+freq.toFixed(1)+' salidas/semana · confianza: '+conf+'.</p>';
+ var x0=Math.min.apply(null,m.pts.map(function(p){return p.x})),W=700,H=230,L=46,R=12,P=14,B=34,ks=[];for(var k=0;k<=52;k+=2)ks.push(k);
+ var vals=m.pts.map(function(p){return p.t}).concat(ks.map(function(k){return m.now*m.f(k,'o')}),ks.map(function(k){return m.now*m.f(k,'c')}));
+ var mn=Math.min.apply(null,vals)*.985,mxv=Math.max.apply(null,vals)*1.015;
+ var X=function(w){return L+(w-x0)/(52-x0)*(W-L-R)},Y=function(v){return P+(v-mn)/(mxv-mn)*(H-P-B)};
+ var band=ks.map(function(k){return X(k)+','+Y(m.now*m.f(k,'o'))}).concat(ks.slice().reverse().map(function(k){return X(k)+','+Y(m.now*m.f(k,'c'))})).join(' ');
+ var real=ks.map(function(k){return X(k)+','+Y(m.now*m.f(k,'r'))}).join(' ');
+ var s='<p style="font-size:12px;color:var(--mu);margin:12px 0 4px">Tu 5K equivalente: ● tus mejores semanas · línea punteada: proyección · banda: rango posible</p><svg viewBox="0 0 700 230"><polygon points="'+band+'" fill="var(--in)" opacity=".18"/><line x1="'+X(0)+'" x2="'+X(0)+'" y1="'+P+'" y2="'+(H-B)+'" stroke="var(--mu)" stroke-dasharray="4 4"/><polyline fill="none" stroke="var(--ac)" stroke-width="2.5" stroke-dasharray="6 4" points="'+real+'"/>';
+ m.pts.forEach(function(p){s+='<circle cx="'+X(p.x)+'" cy="'+Y(p.t)+'" r="3.5" fill="var(--tx)"/>'});
+ s+='<text x="4" y="'+(P+4)+'" font-size="10" fill="var(--mu)">'+fd(mn)+'</text><text x="4" y="'+(H-B+4)+'" font-size="10" fill="var(--mu)">'+fd(mxv)+'</text>';
+ [[0,'Hoy'],[26,'+6 meses'],[52,'+1 año']].concat(x0<=-8?[[x0,'hace '+(-x0)+' sem']]:[]).forEach(function(l){s+='<text x="'+X(l[0])+'" y="'+(H-12)+'" font-size="10" text-anchor="'+(l[0]==x0?'start':l[0]==52?'end':'middle')+'" fill="var(--mu)">'+l[1]+'</text>'});
+ $('pjc').innerHTML=s+'</svg>';
+ $('pjn').textContent='Supone que sigues entrenando con constancia y sin lesiones. Las mejoras se frenan con el tiempo (cada semana rinde menos), por eso no es una línea recta. Media maratón y maratón dependen también de tu volumen y resistencia, no solo de velocidad. Es una estimación, no una promesa.'}
+function go(id,nohash){CUR=id;['s0','sL','s1','s2','s3','s4','s5','s6','s7','s8'].forEach(function(x){$(x).hidden=x!=id});
+ $('g2').textContent='Hola, '+NAME+' 👋';$('hi').textContent='Hola, '+NAME;if(id!='s3')EDIT=null;try{if(id=='s6'){$('cu').value=U;cc()}if(id=='s4')render();if(id=='s5')renderRecs();if(id=='s7'){renderPred();renderProj()}if(id=='s8')renderAcc();}catch(e){}try{window.scrollTo(0,0)}catch(e){}
+ $('nav').style.display=(id=='s1'||id=='s0'||id=='sL')?'none':'';
+ var A={s2:'n2',s3:'n2',s4:'n4',s5:'n5',s6:'n6',s7:'n7',s8:'n8'};['n2','n4','n5','n6','n7','n8'].forEach(function(n){$(n).className=A[id]==n?'act':''});
+ if(!nohash&&H[id]){try{if(location.hash!=='#'+H[id])location.hash=H[id]}catch(e){}}}
+var H={s1:'bienvenida',s2:'registrar',s3:'registrar',s4:'inicio',s5:'records',s6:'calculadora',s7:'predicciones',s8:'cuenta'},CUR='';
+function fromHash(){var h=(location.hash||'').slice(1);for(var k in H)if(H[k]==h&&k!='s3')return k;return''}
+window.addEventListener('hashchange',function(){if(!APP)return;var id=fromHash();if(!id)return;if(!NAME)id='s1';if(id=='s2'&&CUR=='s3')return;if(id!=CUR)go(id,true)});
+function saveName(){var v=$('nm').value.trim();if(!v)return;NAME=v;save();go('s2')}
+$('nm').onkeydown=function(e){if(e.key=='Enter')saveName()};
+function setMode(m){MODE=m;EDIT=null;$('km').value='';$('mi').value='';$('n').value='';$('w').value='';$('rpe').value=5;var wo=m=='wo';$('t').innerHTML=wo?'<option>Pista</option>':'<option>Fácil</option><option>Tempo</option><option>Series</option><option>Largo</option><option>Carrera</option>';
+ $('tl').style.display=wo?'none':'';$('wl').style.display=wo?'':'none';$('ft').textContent=wo?'Workout en pista':'Registrar run';
+ $('d').value=today();$('err').textContent='';render();go('s3')}
+function fp(p){if(!isFinite(p))return'–';var m=Math.floor(p),s=Math.round((p-m)*60);if(s==60){m++;s=0}return m+':'+(s<10?'0':'')+s}
+function wk(d){var x=new Date(d+'T00:00:00');var day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return ymd(x)}
+function sum(a){return a.reduce(function(s,r){return s+r.km},0)}
+function pace(a){var k=sum(a),m=a.reduce(function(s,r){return s+r.min},0);return k?m/k:NaN}
+/* ===== Supabase: sesión, datos y sincronización ===== */
+var SB_URL='https://klugxuofksmzlphfcuzc.supabase.co',SB_KEY='sb_publishable_K-E5oHHGP5tcBb_OrNYrlg_BXtIgGKX';
+var sb=null,USER=null,BASE=null,DIRTY=false,BUSY=false,CONF=null,APP=false,LOADED=null,AMODE='in',RECOVERY=false,PENDING='',PT=null,RT=null;
+var RECOVERY_HINT=/type=recovery/.test(location.hash||'');
+var COLS='name,goal,items,races,updated_at';
+var TYPES=['Fácil','Tempo','Series','Pista','Largo','Carrera'];
+function cmp(x,y){return x.d<y.d?-1:x.d>y.d?1:x.id-y.id}
+function cleanItems(a){var seen={},out=[];if(!Array.isArray(a))return out;a.forEach(function(r,i){if(!r||typeof r!='object')return;var km=+r.km,mn=+r.min;
+ if(!(km>0&&km<1000&&mn>0&&mn<10000)||typeof r.d!='string'||!/^\d{4}-\d{2}-\d{2}$/.test(r.d))return;
+ var id=+r.id>0?Math.floor(+r.id):Date.now()+i;while(seen[id])id++;seen[id]=1;
+ out.push({id:id,d:r.d,km:km,min:mn,t:TYPES.indexOf(r.t)>=0?r.t:'Fácil',rpe:Math.min(10,Math.max(1,Math.round(+r.rpe||5))),n:String(r.n||'').slice(0,300),w:String(r.w||'').slice(0,300)})});
+ out.sort(cmp);return out}
+function cleanRaces(a){var seen={},out=[];if(!Array.isArray(a))return out;a.forEach(function(x,i){if(!x||typeof x!='object'||typeof x.d!='string'||!/^\d{4}-\d{2}-\d{2}$/.test(x.d))return;
+ var id=+x.id>0?Math.floor(+x.id):Date.now()+i;while(seen[id])id++;seen[id]=1;out.push({id:id,n:String(x.n||'').slice(0,100),d:x.d,k:String(x.k||'').slice(0,60)})});return out}
+function normRow(r){return{items:cleanItems(r.items),name:typeof r.name=='string'?r.name.slice(0,60):'',goal:+r.goal>0?+r.goal:0,races:cleanRaces(r.races)}}
+function snap(){return{items:runs,name:NAME,goal:GOAL,races:RACES}}
+function applyData(d){runs=cleanItems(d.items);NAME=typeof d.name=='string'?d.name:'';GOAL=+d.goal>0?+d.goal:0;RACES=cleanRaces(d.races)}
+function ck(uid){return'rt_cache_'+uid}
+function cacheWrite(){if(!USER)return;try{localStorage.setItem(ck(USER.id),JSON.stringify({d:snap(),base:BASE,dirty:DIRTY}))}catch(e){}}
+function cacheRead(uid){try{return JSON.parse(localStorage.getItem(ck(uid))||'null')}catch(e){return null}}
+function cacheClear(uid){try{if(uid)localStorage.removeItem(ck(uid))}catch(e){}}
+function setSync(st,msg){var i={ok:'☁️',busy:'⏳',err:'⚠️'}[st]||'☁️',t={ok:'Sincronizado',busy:'Guardando…',err:'Sin sincronizar'}[st]||'';
+ $('syi').textContent=i;$('syt').textContent=t;$('sync').title=msg||t;SYNCMSG=msg||t;SYNCST=st;if(APP&&CUR=='s8')renderAcc()}
+var SYNCMSG='',SYNCST='ok';
+function explain(e){var m=String(e&&e.message||e||''),c=e&&e.code;
+ if(/fetch|network|Load failed|NetworkError/i.test(m))return'Sin conexión con el servidor. Tus cambios están guardados en este dispositivo y se reintentarán.';
+ if(c=='42501'||/row-level security|permission denied/i.test(m))return'Sin permisos para guardar. Revisa las políticas RLS de runner_data en Supabase.';
+ if(c=='PGRST301'||/JWT|token.*expired/i.test(m))return'Tu sesión expiró. Cierra sesión y vuelve a entrar.';
+ if(c=='42P01'||c=='PGRST205'||/does not exist|schema cache/i.test(m))return'La tabla runner_data no existe o no es accesible.';
+ return'Error al sincronizar: '+m}
+function save(){DIRTY=true;cacheWrite();setSync('busy');clearTimeout(PT);PT=setTimeout(push,500)}
+function scheduleRetry(){clearTimeout(RT);RT=setTimeout(function(){syncNow(false)},20000)}
+function payloadOf(){var d=snap();return{name:d.name,goal:d.goal,items:d.items,races:d.races,updated_at:new Date().toISOString()}}
+async function doUpdate(uid,guard){var q=sb.from('runner_data').update(payloadOf()).eq('user_id',uid);if(guard!==false)q=guard?q.eq('updated_at',guard):q.is('updated_at',null);return q.select('updated_at')}
+async function createRow(uid){var d=payloadOf(),r=await sb.from('runner_data').insert({user_id:uid,name:d.name,goal:d.goal,items:d.items,races:d.races,updated_at:d.updated_at}).select('updated_at').single();if(r.error)throw r.error;return r.data.updated_at}
+async function push(){
+ if(!sb||!USER||!DIRTY||BUSY||CONF||!APP)return;
+ BUSY=true;setSync('busy');var uid=USER.id,sent=JSON.stringify(snap()),again=false;
+ try{
+  var r=await doUpdate(uid,BASE);
+  if(!USER||USER.id!==uid)return;
+  if(r.error)throw r.error;
+  if(r.data&&r.data.length){BASE=r.data[0].updated_at;if(JSON.stringify(snap())===sent){DIRTY=false;setSync('ok')}else again=true;cacheWrite()}
+  else{
+   var c=await sb.from('runner_data').select(COLS).eq('user_id',uid).maybeSingle();
+   if(c.error)throw c.error;if(!USER||USER.id!==uid)return;
+   if(!c.data){BASE=await createRow(uid);DIRTY=false;cacheWrite();setSync('ok')}
+   else if(c.data.updated_at===BASE){var f=await doUpdate(uid,false);if(f.error)throw f.error;BASE=f.data[0].updated_at;DIRTY=JSON.stringify(snap())!==sent;cacheWrite();setSync(DIRTY?'busy':'ok')}
+   else openConflict(snap(),normRow(c.data),c.data.updated_at)}
+ }catch(e){setSync('err',explain(e));scheduleRetry()}
+ finally{BUSY=false}
+ if(again&&DIRTY)push()}
+async function pull(){
+ if(!sb||!USER||BUSY||CONF||!APP)return;BUSY=true;var uid=USER.id;
+ try{var r=await sb.from('runner_data').select(COLS).eq('user_id',uid).maybeSingle();
+  if(!USER||USER.id!==uid)return;if(r.error)throw r.error;
+  if(!r.data){BASE=await createRow(uid);DIRTY=false;cacheWrite();setSync('ok')}
+  else if(r.data.updated_at!==BASE){
+   if(DIRTY)openConflict(snap(),normRow(r.data),r.data.updated_at);
+   else{applyData(normRow(r.data));BASE=r.data.updated_at;cacheWrite();renderAll();setSync('ok')}}
+  else setSync(DIRTY?'busy':'ok')}
+ catch(e){setSync('err',explain(e));scheduleRetry()}
+ finally{BUSY=false}
+ if(DIRTY&&!CONF)push()}
+function syncNow(manual){if(!USER||!APP)return;if(CONF){$('conf').hidden=false;return}clearTimeout(RT);if(DIRTY)push();else pull()}
+function renderAll(){try{render();if(CUR=='s5')renderRecs();if(CUR=='s7'){renderPred();renderProj()}if(CUR=='s8')renderAcc();var g=$('g2');if(g)g.textContent='Hola, '+NAME+' 👋';$('hi').textContent='Hola, '+NAME}catch(e){}}
+function renderAcc(){$('acc').textContent='Sesión iniciada como '+(USER?USER.email:'');$('syd').textContent=(SYNCST=='ok'?'☁️ ':SYNCST=='busy'?'⏳ ':'⚠️ ')+SYNCMSG}
+function mergeData(a,b){var m={},items=[],rm={},races=[];b.items.concat(a.items).forEach(function(r){m[r.id]=r});Object.keys(m).forEach(function(k){items.push(m[k])});
+ b.races.concat(a.races).forEach(function(x){rm[x.id]=x});Object.keys(rm).forEach(function(k){races.push(rm[k])});
+ return{items:items,races:races,name:b.name||a.name,goal:b.goal||a.goal}}
+function openConflict(local,cloud,base){CONF={local:local,cloud:cloud,base:base};
+ $('cfs').textContent='Nube: '+cloud.items.length+' entrenamientos y '+cloud.races.length+' carreras · Este dispositivo: '+local.items.length+' y '+local.races.length+'.';
+ $('conf').hidden=false;setSync('err','Conflicto: elige qué datos conservar')}
+function resolveConflict(mode){var c=CONF;if(!c)return;CONF=null;$('conf').hidden=true;
+ if(mode=='cloud'){applyData(c.cloud);DIRTY=false}
+ else if(mode=='local'){applyData(c.local);DIRTY=true}
+ else{applyData(mergeData(c.local,c.cloud));DIRTY=true}
+ BASE=c.base;cacheWrite();renderAll();if(DIRTY){setSync('busy');push()}else setSync('ok')}
+async function loadUser(session,retried){
+ var uid=session.user.id;USER=session.user;LOADED=uid;APP=false;
+ $('slm').textContent='Cargando tus datos…';$('sla').style.display='none';go('sL',true);
+ var cache=cacheRead(uid);
+ if(cache&&cache.dirty){applyData(cache.d);BASE=cache.base;DIRTY=true}else{applyData({});BASE=null;DIRTY=false}
+ try{
+  var r=await sb.from('runner_data').select(COLS).eq('user_id',uid).maybeSingle();
+  if(!USER||USER.id!==uid)return;if(r.error)throw r.error;
+  if(!r.data){BASE=await createRow(uid);DIRTY=false}
+  else if(DIRTY&&cache.base===r.data.updated_at){BASE=r.data.updated_at}
+  else if(DIRTY){BASE=r.data.updated_at;enterApp();openConflict(snap(),normRow(r.data),r.data.updated_at);return}
+  else{applyData(normRow(r.data));BASE=r.data.updated_at}
+  cacheWrite();enterApp();setSync(DIRTY?'busy':'ok');if(DIRTY)push();
+ }catch(e){
+  if(e&&e.code=='23505'&&!retried){return loadUser(session,true)}
+  if(cache&&/fetch|network|Load failed/i.test(String(e&&e.message||e))){applyData(cache.d);BASE=cache.base;DIRTY=!!cache.dirty;enterApp();setSync('err','Sin conexión: usando los datos guardados en este dispositivo');scheduleRetry();return}
+  var em=explain(e);if(/Sin conexión/.test(em))em='Sin conexión con el servidor.';showLoadError(em+' Por seguridad no se muestran ni se editan datos hasta cargarlos correctamente.')}}
+function enterApp(){APP=true;var h=fromHash();renderAll();go(NAME?(h&&h!='s1'?h:'s4'):'s1',true)}
+function showLoadError(m){APP=false;$('slm').textContent=m;$('sla').style.display='flex';go('sL',true)}
+function retryLoad(){LOADED=null;sb.auth.getSession().then(function(r){handleSession(r.data&&r.data.session)})}
+function handleSession(session){
+ if(!session||!session.user){if(USER||APP)onSignedOut();else showAuth();return}
+ if(RECOVERY||RECOVERY_HINT){showAuth('rec');return}
+ if(LOADED===session.user.id){USER=session.user;return}
+ if(USER&&USER.id!==session.user.id)resetState();
+ loadUser(session)}
+function resetState(){clearTimeout(PT);clearTimeout(RT);runs=[];NAME='';GOAL=0;RACES=[];BASE=null;DIRTY=false;BUSY=false;USER=null;LOADED=null;CONF=null;APP=false;EDIT=null;
+ $('conf').hidden=true;
+ ['km','mi','n','w','rn','rk','rd','gv','nm','cv','ct','cq','ap','ap2','imm'].forEach(function(i){var e=$(i);if(e)e.value=''});
+ ['kp','ins','c1','c2','c3','c3t','cal','rc','hs','gl','pr','pj','pjc','rmi','rkm','cr','acc','syd','imm'].forEach(function(i){var e=$(i);if(e)e.innerHTML=''});
+ $('pjn').textContent='';$('hi').textContent='';$('g2').textContent='';SYNCMSG='';SYNCST='ok';setSync('ok')}
+function onSignedOut(){resetState();showAuth('in')}
+function showAuth(m){APP=false;go('s0',true);authMode(m||'in');if(PENDING){authMsg(PENDING);PENDING=''}}
+async function authLogout(force){
+ if(!force&&(DIRTY||BUSY)){clearTimeout(PT);BUSY=false;await push();
+  if(DIRTY&&!confirm('Tienes cambios sin sincronizar que se perderán si cierras sesión. ¿Cerrar sesión de todos modos?'))return}
+ var uid=USER&&USER.id;cacheClear(uid);
+ try{await sb.auth.signOut({scope:'local'})}catch(e){}
+ onSignedOut()}
+/* ----- pantalla de acceso ----- */
+function authMsg(t,ok){var m=$('am');m.textContent=t||'';m.style.color=ok?'var(--ok)':'var(--bad)'}
+function authMode(m){AMODE=m;$('tin').className=m=='in'?'':'o';$('tup').className=m=='up'?'':'o';
+ $('ap2l').style.display=(m=='up'||m=='rec')?'':'none';$('ael').style.display=m=='rec'?'none':'';
+ $('afg').style.display=m=='in'?'':'none';$('atabs').style.display=m=='rec'?'none':'flex';
+ $('ap').autocomplete=m=='in'?'current-password':'new-password';
+ $('apl').firstChild.nodeValue=m=='rec'?'Nueva contraseña':'Contraseña';
+ $('ago').textContent=m=='in'?'Iniciar sesión':m=='up'?'Crear cuenta':'Guardar nueva contraseña';$('ars').style.display='none';authMsg('')}
+function authErr(e){var m=String(e&&e.message||e||''),c=e&&(e.code||e.status);
+ if(/fetch|network|Load failed/i.test(m))return'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+ if(/Invalid login credentials/i.test(m))return'Correo o contraseña incorrectos.';
+ if(/Email not confirmed/i.test(m)||c=='email_not_confirmed'){$('ars').style.display='';return'Aún no confirmaste tu correo. Abre el enlace que te enviamos (revisa también spam).'}
+ if(/already registered|already been registered/i.test(m))return'Ese correo ya está registrado. Inicia sesión o recupera tu contraseña.';
+ if(/at least \d+ char|weak|short/i.test(m))return'La contraseña es muy débil o muy corta. Usa al menos 6 caracteres.';
+ if(/rate limit|too many|over_email_send_rate_limit|429/i.test(m+c))return'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+ if(/same password|different from the old/i.test(m))return'La nueva contraseña debe ser distinta de la anterior.';
+ if(/invalid.*email|valid email/i.test(m))return'El correo no es válido.';
+ if(/expired|invalid/i.test(m)&&/link|token|otp/i.test(m))return'El enlace no es válido o ya expiró. Solicita uno nuevo.';
+ return'No se pudo completar la acción: '+m}
+function redirectUrl(){return(location.origin+location.pathname).replace(/index\.html$/,'')}
+function busyAuth(b){$('ago').disabled=b;$('ago').style.opacity=b?.6:1}
+async function authGo(){
+ var em=$('ae').value.trim(),pw=$('ap').value;
+ if(AMODE!='rec'&&!/^\S+@\S+\.\S+$/.test(em)){authMsg('Escribe un correo válido.');return}
+ if(!pw){authMsg('Escribe tu contraseña.');return}
+ if(AMODE!='in'){if(pw.length<6){authMsg('La contraseña debe tener al menos 6 caracteres.');return}if(pw!==$('ap2').value){authMsg('Las contraseñas no coinciden.');return}}
+ busyAuth(true);$('ars').style.display='none';authMsg('');
+ try{
+  if(AMODE=='in'){var r=await sb.auth.signInWithPassword({email:em,password:pw});if(r.error)throw r.error;$('ap').value=''}
+  else if(AMODE=='up'){var r=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:redirectUrl()}});if(r.error)throw r.error;
+   if(r.data&&r.data.user&&r.data.user.identities&&r.data.user.identities.length===0)authMsg('Ese correo ya está registrado. Inicia sesión o recupera tu contraseña.');
+   else if(!r.data||!r.data.session){authMsg('Te enviamos un correo de confirmación a '+em+'. Abre el enlace para activar tu cuenta y luego inicia sesión.',true);$('ap').value='';$('ap2').value=''}}
+  else{var r=await sb.auth.updateUser({password:pw});if(r.error)throw r.error;RECOVERY=false;RECOVERY_HINT=false;$('ap').value='';$('ap2').value='';
+   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+   var g=await sb.auth.getSession();handleSession(g.data&&g.data.session)}
+ }catch(e){authMsg(authErr(e))}
+ finally{busyAuth(false)}}
+async function authForgot(){var em=$('ae').value.trim();
+ if(!/^\S+@\S+\.\S+$/.test(em)){authMsg('Escribe tu correo arriba y vuelve a tocar «¿Olvidaste tu contraseña?».');return}
+ try{var r=await sb.auth.resetPasswordForEmail(em,{redirectTo:redirectUrl()});if(r.error)throw r.error;authMsg('Si el correo está registrado, te enviamos un enlace para restablecer tu contraseña.',true)}catch(e){authMsg(authErr(e))}}
+async function authResend(){var em=$('ae').value.trim();try{var r=await sb.auth.resend({type:'signup',email:em,options:{emailRedirectTo:redirectUrl()}});if(r.error)throw r.error;authMsg('Correo de confirmación reenviado a '+em+'.',true)}catch(e){authMsg(authErr(e))}}
+$('ap').addEventListener('keydown',function(e){if(e.key=='Enter'&&AMODE=='in')authGo()});
+$('ap2').addEventListener('keydown',function(e){if(e.key=='Enter')authGo()});
+$('ae').addEventListener('keydown',function(e){if(e.key=='Enter'&&AMODE!='in')authGo()});
+/* ----- respaldo ----- */
+function exportData(){var o=Object.assign({app:'mi-progreso-corriendo',v:1,exported:new Date().toISOString()},snap());
+ var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,2)],{type:'application/json'}));a.download='mi-progreso-corriendo-'+today()+'.json';
+ document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function importData(txt){var m=$('imm');
+ try{var o=JSON.parse(txt),items=cleanItems(Array.isArray(o)?o:o.items),races=Array.isArray(o)?[]:cleanRaces(o.races);
+  if(!items.length&&!races.length){m.textContent='No encontré registros válidos en el archivo.';return}
+  var have={},rh={};runs.forEach(function(r){have[r.id]=1});RACES.forEach(function(r){rh[r.id]=1});
+  var add=items.filter(function(r){return!have[r.id]}),addR=races.filter(function(r){return!rh[r.id]});
+  add.forEach(function(r){runs.push(r)});runs.sort(cmp);addR.forEach(function(r){RACES.push(r)});
+  if(!NAME&&!Array.isArray(o)&&typeof o.name=='string')NAME=o.name.slice(0,60);
+  if(!GOAL&&!Array.isArray(o)&&+o.goal>0)GOAL=+o.goal;
+  save();renderAll();m.textContent='Importados '+add.length+' entrenamientos y '+addR.length+' carreras (se omitieron los que ya existían).'}
+ catch(e){m.textContent='El archivo no es un JSON válido.'}}
+$('imf').addEventListener('change',function(){var f=this.files[0];this.value='';if(!f)return;var rd=new FileReader();rd.onload=function(){importData(String(rd.result))};rd.readAsText(f)});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&USER&&APP)syncNow(false)});
+window.addEventListener('online',function(){if(USER&&APP)syncNow(false)});
+window.addEventListener('beforeunload',function(e){if(DIRTY){e.preventDefault();e.returnValue=''}});
+function guardar(){var err=$('err');try{guardarX(err)}catch(e){err.textContent='Error: '+(e&&e.message||e)}}
+function guardarX(err){err.textContent='';
+ var mn=pd($('mi').value),km=parseFloat($('km').value),wo=MODE=='wo',w=$('w').value.trim();
+ if(!$('d').value){err.textContent='Falta la fecha.';return}
+ if(!(km>0)){err.textContent='Escribe una distancia válida.';return}
+ if(!(mn>0)){err.textContent='Duración inválida. Usa 19:33 (min:seg) o 1:05:20 (h:min:seg).';return}
+ if(wo&&!w){err.textContent='Describe el workout (ej. 8x400m).';return}
+ if(EDIT)runs=runs.filter(function(x){return x.id!==EDIT});runs.push({id:EDIT||Date.now(),d:$('d').value,km:km*(U=='mi'?MI:1),min:mn,t:wo?'Pista':$('t').value,rpe:+$('rpe').value||5,n:$('n').value,w:wo?w:''});
+ runs.sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:a.id-b.id});
+ $('km').value='';$('mi').value='';$('n').value='';$('w').value='';
+ try{save()}catch(e){}
+ go('s4')}
+$('gb').addEventListener('click',guardar);
+$('f').addEventListener('keydown',function(e){if(e.key=='Enter'&&e.target.tagName=='INPUT')guardar()});
+function del(id){runs=runs.filter(function(r){return r.id!==id});save();render()}
+function bars(data,lab){var W=700,H=190,p=28,n=data.length,mx=Math.max.apply(null,data.concat([1])),bw=(W-p*2)/n,s='<svg viewBox="0 0 '+W+' '+H+'">';
+ data.forEach(function(v,i){var h=(H-p*2)*v/mx,x=p+i*bw;s+='<rect x="'+(x+3)+'" y="'+(H-p-h)+'" width="'+(bw-6)+'" height="'+h+'" rx="3" fill="var(--ac)"/><text x="'+(x+bw/2)+'" y="'+(H-p-h-4)+'" font-size="11" text-anchor="middle" fill="var(--tx)">'+v.toFixed(0)+'</text><text x="'+(x+bw/2)+'" y="'+(H-8)+'" font-size="10" text-anchor="middle" fill="var(--mu)">'+lab[i]+'</text>'});
+ return s+'</svg>'}
+function line(vals,lab,f,up,col){var C=col||'var(--ac)',W=700,H=190,p=34,n=vals.length,mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);if(mx-mn<.2){mx+=.1;mn-=.1}
+ var X=function(i){return p+(n>1?i*(W-p*2)/(n-1):(W-p*2)/2)},Y=function(v){return up?H-p-(v-mn)/(mx-mn)*(H-p*2):p+(v-mn)/(mx-mn)*(H-p*2)};
+ var s='<svg viewBox="0 0 '+W+' '+H+'"><text x="4" y="'+(p+4)+'" font-size="10" fill="var(--mu)">'+(f||fp)(up?mx:mn)+'</text><text x="4" y="'+(H-p+4)+'" font-size="10" fill="var(--mu)">'+(f||fp)(up?mn:mx)+'</text><polyline fill="none" stroke="'+C+'" stroke-width="2.5" points="'+vals.map(function(v,i){return X(i)+','+Y(v)}).join(' ')+'"/>';
+ vals.forEach(function(v,i){s+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.5" fill="'+C+'"/>';if(n<=12||i%Math.ceil(n/10)==0)s+='<text x="'+X(i)+'" y="'+(H-8)+'" font-size="10" text-anchor="middle" fill="var(--mu)">'+lab[i]+'</text>'});
+ return s+'</svg>'}
+function delta(a,b,lowerBetter,unit,fmt){if(!isFinite(a)||!isFinite(b)||!b)return'';var pc=(a-b)/b*100,good=lowerBetter?pc<0:pc>0;
+ return'<span class="'+(good?'up':'dn')+'">'+(pc>0?'▲ ':'▼ ')+Math.abs(pc).toFixed(1)+'%</span>'}
+function render(){
+ $('ukm').className='g'+(U=='km'?' on':'');$('umi').className='g'+(U=='mi'?' on':'');$('lbd').textContent='Distancia ('+U+')';[renderGoal,renderPred,renderProj,renderEff,renderCal,renderRaces].forEach(function(f){try{f()}catch(e){}});
+ var E='<div class="em">Aún no hay entrenamientos. Registra tu primera salida arriba.</div>';
+ if(!runs.length){$('kp').innerHTML='';$('ins').innerHTML=E;$('c1').innerHTML=E;$('c2').innerHTML=E;$('hs').innerHTML=E;return}
+ var tk=sum(runs),tm=runs.reduce(function(s,r){return s+r.min},0),lg=Math.max.apply(null,runs.map(function(r){return r.km}));
+ var th=U=='mi'?3.218688:3,best=runs.filter(function(r){return r.km>=th-.001}).sort(function(a,b){return a.min/a.km-b.min/b.km})[0];
+ $('kp').innerHTML=[[runs.length,'salidas'],[cd(tk).toFixed(1)+' '+U,'distancia total'],[fp(cp(pace(runs)))+'/'+U,'ritmo medio'],[cd(lg).toFixed(1)+' '+U,'salida más larga'],[best?fp(cp(best.min/best.km))+'/'+U:'–','mejor ritmo (≥'+(U=='mi'?'2 mi':'3 km')+')'],[(tm/60).toFixed(1)+' h','tiempo total']].map(function(x){return'<div class="k"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>'}).join('');
+ var wm={};runs.forEach(function(r){var w=wk(r.d);(wm[w]=wm[w]||[]).push(r)});
+ var ws=Object.keys(wm).sort(),cur=wk(today()),last8=ws.slice(-8);
+ var prevW=new Date(cur+'T00:00:00');prevW.setDate(prevW.getDate()-7);prevW=ymd(prevW);
+ var tw=wm[cur]||[],pw=wm[prevW]||[];
+ var n=Date.now(),D=function(a,b){return runs.filter(function(r){var x=(n-new Date(r.d+'T00:00:00'))/864e5;return x>=a&&x<b})};
+ var l4=D(0,28),p4=D(28,56),h=[];
+ h.push('<p>📅 <b>Esta semana:</b> '+cd(sum(tw)).toFixed(1)+' '+U+' en '+tw.length+' salidas · semana pasada: '+cd(sum(pw)).toFixed(1)+' '+U+' '+(pw.length?delta(sum(tw),sum(pw),false):'')+'</p>');
+ if(l4.length&&p4.length)h.push('<p>⏱️ <b>Ritmo últimas 4 semanas:</b> '+fp(cp(pace(l4)))+'/'+U+' vs '+fp(cp(pace(p4)))+'/'+U+' las 4 anteriores '+delta(pace(l4),pace(p4),true)+'</p><p>📈 <b>Volumen últimas 4 semanas:</b> '+cd(sum(l4)).toFixed(1)+' '+U+' vs '+cd(sum(p4)).toFixed(1)+' '+U+' '+delta(sum(l4),sum(p4),false)+'</p>');
+ else h.push('<p class="em" style="text-align:left;padding:0">Con 8 semanas de datos verás la comparación de ritmo y volumen.</p>');
+ var easy=runs.filter(function(r){return r.t=='Fácil'});if(easy.length>=4){var m=Math.floor(easy.length/2);h.push('<p>🟢 <b>Ritmo en salidas fáciles:</b> '+fp(cp(pace(easy.slice(0,m))))+' → '+fp(cp(pace(easy.slice(m))))+'/'+U+' (primera mitad vs segunda) '+delta(pace(easy.slice(m)),pace(easy.slice(0,m)),true)+'</p>')}
+ if(ws.length>=2){var lw=sum(wm[ws[ws.length-1]]||[]),pk=sum(wm[ws[ws.length-2]]||[]);if(ws[ws.length-1]==cur&&pk&&lw>pk*1.3&&false)h.push('')}
+ var mw=Math.max.apply(null,ws.map(function(w){return sum(wm[w])}));h.push('<p>🏆 <b>Tu semana más fuerte:</b> '+cd(mw).toFixed(1)+' '+U+'</p>');
+ h.push(loadMsg());$('ins').innerHTML=h.join('');
+ $('c1').innerHTML=bars(last8.map(function(w){return cd(sum(wm[w]))}),last8.map(function(w){return w.slice(5)}));
+ var l=runs.slice(-20);$('c2').innerHTML=line(l.map(function(r){return cp(r.min/r.km)}),l.map(function(r){return r.d.slice(5)}),null,false,'var(--in)');
+ $('hs').innerHTML='<table><tr><th>Fecha</th><th>Tipo</th><th>Dist</th><th>Tiempo</th><th>Ritmo</th><th>RPE</th><th>Workout / notas</th><th></th></tr>'+runs.slice().reverse().map(function(r){return'<tr><td>'+r.d+'</td><td>'+r.t+'</td><td>'+cd(r.km).toFixed(2)+' '+U+'</td><td>'+fd(r.min)+'</td><td>'+fp(cp(r.min/r.km))+'/'+U+'</td><td>'+r.rpe+'</td><td>'+(r.w?'<b>'+esc(r.w)+'</b> ':'')+esc(r.n||'')+'</td><td style="white-space:nowrap"><button class="g" onclick="edit('+r.id+')">✎</button><button class="g" onclick="del('+r.id+')">✕</button></td></tr>'}).join('')+'</table>'}
+applyTheme();
+(function(){var m=(location.hash||'').match(/error_description=([^&]+)/);if(m){try{PENDING=decodeURIComponent(m[1].replace(/\+/g,' '))}catch(e){PENDING='El enlace no es válido o expiró.'}
+ PENDING=/expired|invalid/i.test(PENDING)?'El enlace no es válido o ya expiró. Solicita uno nuevo.':PENDING}})();
+go('sL',true);
+if(!window.supabase||!window.supabase.createClient){showLoadError('No se pudo cargar el servicio de cuentas. Revisa tu conexión y recarga la página.')}
+else{try{sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ sb.auth.onAuthStateChange(function(ev,session){setTimeout(function(){
+  if(ev=='PASSWORD_RECOVERY')RECOVERY=true;
+  if(ev=='SIGNED_OUT'){onSignedOut();return}
+  handleSession(session)},0)})}
+ catch(e){showLoadError('No se pudo iniciar el servicio de cuentas: '+(e&&e.message||e))}}
+</script></body></html>
